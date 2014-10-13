@@ -108,7 +108,7 @@ local function get_json_body()
     ngx.req.read_body()
     local body = ngx.req.get_body_data()
     local ok, json = pcall(json_decode, body)
-    ngx.log(ngx.DEBUG, body)
+
     if ok then
         return json
     end
@@ -142,6 +142,7 @@ end
 
 
 function route_funcs.queues_json(self, matches)
+    ngx.header["Content-Type"] = "application/json"
     return json_encode(self.client.queues:counts())
 end
 
@@ -253,6 +254,12 @@ function route_funcs.failed(self, matches)
 end
 
 
+function route_funcs.failed_json(self, matches)
+    ngx.header["Content-Type"] = "application/json"
+    return json_encode(self.client.jobs:failed())
+end
+
+
 function route_funcs.completed(self, matches)
     return render_view(self, "completed.tpl", {jobs = self.client.jobs:complete()})
 end
@@ -288,6 +295,8 @@ function route_funcs.track(self, matches)
         return nil
     end
 
+    ngx.header["Content-Type"] = "application/json"
+
     local jobid = json.id
     local job = client.jobs:get(jobid)
 
@@ -320,6 +329,7 @@ function route_funcs.untrack(self, matches)
         local job = client.jobs:get(jid)
         job:untrack()
     end
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({untracked = json})
 end
 
@@ -336,6 +346,7 @@ function route_funcs.priority(self, matches)
         local job = client.jobs:get(jid)
         job.priority = priority
     end
+    ngx.header["Content-Type"] = "application/json"
     return json_encode(json)
 end
 
@@ -354,6 +365,7 @@ function route_funcs.pause(self, matches)
     local q = client.queues[json.queue]
     q:pause()
 
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({queue = 'paused'})
 end
 
@@ -372,6 +384,7 @@ function route_funcs.unpause(self, matches)
     local q = client.queues[json.queue]
     q:unpause()
 
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({queue = 'unpaused'})
 end
 
@@ -390,6 +403,7 @@ function route_funcs.timeout(self, matches)
     local job = client.jobs:get(json.jid)
     job:timeout()
 
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({jid = json.jid})
 end
 
@@ -425,6 +439,7 @@ function route_funcs.tag(self, matches)
         local job = client.jobs:get(jid)
         job:tag(unpack(tags))
     end
+    ngx.header["Content-Type"] = "application/json"
     return json_encode(json)
 end
 
@@ -440,6 +455,7 @@ function route_funcs.untag(self, matches)
         local job = client.jobs:get(jid)
         job:untag(unpack(tags))
     end
+    ngx.header["Content-Type"] = "application/json"
     return json_encode(json)
 end
 
@@ -462,6 +478,7 @@ function route_funcs.move(self,matches)
 
     job:requeue(json.queue)
 
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({id = json.id, queue = json.queue})
 end
 
@@ -483,6 +500,8 @@ function route_funcs.undepend(self, matches)
     end
 
     job:undepend(json.dependency)
+
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({id = json.id})
 end
 
@@ -504,6 +523,8 @@ function route_funcs.retry(self, matches)
     end
 
     job:requeue(job.queue)
+
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({id = json.id})
 end
 
@@ -524,6 +545,7 @@ function route_funcs.retry_all(self, matches)
         job:requeue(job.queue)
     end
 
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({})
 end
 
@@ -548,6 +570,8 @@ function route_funcs.cancel(self, matches)
     end
 
     job:cancel()
+
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({id = id})
 end
 
@@ -568,6 +592,7 @@ function route_funcs.cancel_all(self, matches)
         job:cancel()
     end
 
+    ngx.header["Content-Type"] = "application/json"
     return json_encode({})
 end
 
@@ -581,10 +606,10 @@ local routes = {
     ["/queues/(?<queue>[^/]+)(/(?<tab>[^/]+)/?)?$"] = route_funcs.queue,
     ["/workers/?$"]                   = route_funcs.workers,
     ["/workers/(?<worker>[^/]+)?/?$"] = route_funcs.worker,
-    ["/failed.json$"]              = route_funcs.failed_json,
-    ["/failed/?(?<type>[^/]+)?/?$"] = route_funcs.failed,
-    ["/jobs/?(?<jid>[^/]+)?/?$"]    = route_funcs.job,
-    ["/completed/?$"]              = route_funcs.completed,
+    ["/failed.json$"]                 = route_funcs.failed_json,
+    ["/failed/?(?<type>[^/]+)?/?$"]   = route_funcs.failed,
+    ["/jobs/?(?<jid>[^/]+)?/?$"]      = route_funcs.job,
+    ["/completed/?$"]                 = route_funcs.completed,
     ["/track/?$"] = { GET = route_funcs.view_track, POST = route_funcs.track },
     ["/tag/?$"]   = { GET = route_funcs.view_tag,   POST = route_funcs.tag },
 
