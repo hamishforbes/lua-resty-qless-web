@@ -11,7 +11,7 @@ Port of Moz's [qless](https://github.com/seomoz/qless) web interface to the [Ope
 ### Methods
 
 #### new
-'syntax: ok, err = Qless_web:new(opts)'
+`syntax: ok, err = Qless_web:new(opts)`
 
 `opts` is a table of options
  * `client` must be an instance of [lua-resty-qless](https://github.com/pintsized/lua-resty-qless)
