@@ -161,13 +161,16 @@ function route_funcs.queue(self, matches)
 
     local filtered_tabs = {running = true, scheduled = true, stalled = true, depends = true, recurring = true}
 
-    local jobs
+    local jobs = {}
     if tab == 'waiting' then
         jobs = queue:peek(20)
     elseif filtered_tabs[tab] then
         -- TODO: Handle pagination
         local get_job_func = queue.jobs[tab]
-        jobs = get_job_func(queue.jobs, 0, 25)
+        local jids = get_job_func(queue.jobs, 0, 25)
+        for i,jid in ipairs(jids) do
+            jobs[i] = client.jobs:get(jid)
+        end
     end
 
     local vars = {
