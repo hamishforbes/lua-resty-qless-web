@@ -119,24 +119,24 @@
 	        <div style="overflow-y:scroll; height: 200px">
 	          {% for _,h in ipairs(job.raw_queue_history) do %}
 	          {% if h['what'] == 'put' then %}
-	          	<pre><strong>{{ h['what'] }}</strong> at {{ os.date("%x",h['when']) }}
+	          	<pre><strong>{{ h['what'] }}</strong> at {{ os.date("%c",h['when']) }}
     in queue <strong>{{ h['q'] }}</strong></pre>
 	          {% elseif h['what'] == 'popped' then %}
-	          	<pre><strong>{{ h['what'] }}</strong> at {{ os.date("%x",h['when']) }}
+	          	<pre><strong>{{ h['what'] }}</strong> at {{ os.date("%c",h['when']) }}
     by <strong>{{ h['worker'] }}</strong></pre>
 	          {% elseif h['what'] == 'done' then %}
-	          	<pre><strong>completed</strong> at {{ os.date("%x",h['when']) }}</pre>
+	          	<pre><strong>completed</strong> at {{ os.date("%c",h['when']) }}</pre>
 	          {% elseif h['what'] == 'failed' then %}
 	          	{% if h['worker'] then %}
-	          	  <pre><strong>{{ h['what'] }}</strong> at {{ os.date("%x",h['when']) }}
+	          	  <pre><strong>{{ h['what'] }}</strong> at {{ os.date("%c",h['when']) }}
     by <strong>{{ h['worker'] }}</strong>
     in group <strong>{{ h['group'] }}</strong></pre>
 	          	{% else %}
-	          	  <pre><strong>{{ h['what'] }}</strong> at {{ os.date("%x",h['when']) }}
+	          	  <pre><strong>{{ h['what'] }}</strong> at {{ os.date("%c",h['when']) }}
     in group <strong>{{ h['group'] }}</strong></pre>
 	          	{% end %}
 	          {% else %}
-	          	<pre><strong>{{ h['what'] }}</strong> at {{ os.date("%x",h['when']) }}</pre>
+	          	<pre><strong>{{ h['what'] }}</strong> at {{ os.date("%c",h['when']) }}</pre>
 	          {% end %}
 	          {% end %}
 	        </div>
@@ -144,7 +144,7 @@
 	    </div>
 	    {% end %}
 
-	    {% if #job.failure > 0 then %}
+	    {% if job.failure and job.failure.when then %}
 	    <div class="row">
 	      <div class="span12">
 	        <div class="alert alert-error">
