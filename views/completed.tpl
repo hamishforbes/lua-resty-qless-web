@@ -1,6 +1,6 @@
 {% if jobs then %}
   <div class="page-header">
-    <h1>No Completed Jobs<small>(yet)</small></h1>
+    <h1>Completed Jobs <small>You must be doing something right!</small></h1>
   </div>
   {% for _, job in ipairs(jobs) do %}
     {%
@@ -13,7 +13,7 @@
   {% end %}
 {% else %}
   <div class="page-header">
-    <h1>Completed Jobs <small>You must be doing something right!</small></h1>
+    <h1>No Completed Jobs<small>(yet)</small></h1>
   </div>
 {% end %}
 

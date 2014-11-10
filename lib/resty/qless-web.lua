@@ -277,7 +277,14 @@ end
 
 
 function route_funcs.completed(self, matches)
-    return render_view(self, "completed.tpl", {jobs = self.client.jobs:complete()})
+    local jids = self.client.jobs:complete()
+
+    local job_obj = self.client.jobs
+    local jobs = {}
+    for i, jid in ipairs(jids) do
+        jobs[i] = job_obj:get(jid)
+    end
+    return render_view(self, "completed.tpl", {jobs = jobs})
 end
 
 
