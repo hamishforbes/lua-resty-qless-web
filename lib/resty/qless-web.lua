@@ -216,8 +216,21 @@ function route_funcs.worker(self, matches)
     local client = self.client
 
     local worker = client.workers[workerid]
+    worker = json_decode(worker)
     --ngx.log(ngx.DEBUG, json_encode(worker.jobs) )
     worker.name = workerid
+
+    local jobs = {}
+    for i, jid in ipairs(worker.jobs) do
+        jobs[i] = client.jobs:get(jid)
+    end
+    worker.jobs = jobs
+
+    local stalled = {}
+    for i, jid in ipairs(worker.stalled) do
+        jobs[i] = client.jobs:get(jid)
+    end
+    worker.stalled = stalled
 
     --[[
             worker: client.workers[params[:worker] ].tap do |w|
@@ -226,8 +239,9 @@ function route_funcs.worker(self, matches)
               w['name']    = params[:worker]
             end
     ]]--
+
     local vars = {
-        title = "Worker | " .. (worker or ""),
+        title = "Worker | " .. (workerid or ""),
         worker = worker
     }
 
