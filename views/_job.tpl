@@ -144,7 +144,7 @@
 	    </div>
 	    {% end %}
 
-	    {% if #job.failure > 0 then %}
+	    {% if job.failure and job.failure.when then %}
 	    <div class="row">
 	      <div class="span12">
 	        <div class="alert alert-error">
