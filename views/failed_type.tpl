@@ -23,5 +23,3 @@
       {* job_tpl(new_context) *}
     {% end %}
 
-{# erb :_job_list, :locals => { :jobs => failed.fetch('jobs'), :queues => queues } #}
-

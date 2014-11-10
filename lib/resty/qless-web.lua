@@ -236,21 +236,34 @@ function route_funcs.failed(self, matches)
     local type_name = matches.type
     local vars = {}
     if type_name then
+        local vars = client.jobs:failed(type_name)
         vars.title = "Failed | "..type_name
-        vars.failed = client.jobs:failed()
+        vars.type = type_name
+        for k,v in pairs(vars) do
+            ngx.log(ngx.DEBUG, k)
+        end
         --[[
         failed: paginated(client.jobs, :failed, params[:type])
         --]]
         return render_view(self, "failed_type.tpl", vars)
     else
         vars.title = "Failed"
-        vars.type = type_name
-        vars.failed =  client.jobs:failed()
+        local failed =  client.jobs:failed()
+        if failed then
+            vars.failed = {}
+            local tmp = {}
+            for fail_type, total in pairs(failed) do
+                local fail = client.jobs:failed(fail_type)
+                fail.type = fail_type
+                tbl_insert(vars.failed, fail)
+            end
+        end
 
         --[[
-         failed: client.jobs.failed.keys.map do |t|
-           client.jobs.failed(t).tap { |f| f['type'] = t }
-            end
+            vars.failed = {
+                { type = 'failed type', jobs = 'array of job objects', total = 'count of job objects' },
+                { type = 'failed type', jobs = 'array of job objects', total = 'count of job objects' },
+            }
         --]]
         return render_view(self, "failed.tpl", vars)
     end
