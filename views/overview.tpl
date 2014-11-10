@@ -52,7 +52,7 @@
 </table>
 {% end %}
 
-{% if not (#failed > 0) then %}
+{% if not failed then %}
   <div class="page-header">
     <h1>No Failed Jobs <small>Clean as a whistle</small></h1>
   </div>
@@ -89,7 +89,7 @@
   </div>
   {%
     local counts = {}
-    for job, counts in pairs(tracked['jobs']) do
+    for _, job in pairs(tracked['jobs']) do
       if not counts[job.state] then
         counts[job.state] = 0
       else

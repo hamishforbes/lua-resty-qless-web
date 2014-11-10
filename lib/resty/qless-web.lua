@@ -119,10 +119,16 @@ end
 local route_funcs = {}
 function route_funcs.overview(self)
     local client = self.client
+    local failed = nil
+    local tmp = client.jobs:failed()
+    for k,v in pairs(tmp) do
+        failed = tmp
+        break
+    end
     local vars = {
         title  = "Overview",
         queues  = client.queues:counts(),
-        failed  = client.jobs:failed(),
+        failed  = failed,
         tracked = client.jobs:tracked(),
         workers = client.workers:counts(),
     }
@@ -239,12 +245,6 @@ function route_funcs.failed(self, matches)
         local vars = client.jobs:failed(type_name)
         vars.title = "Failed | "..type_name
         vars.type = type_name
-        for k,v in pairs(vars) do
-            ngx.log(ngx.DEBUG, k)
-        end
-        --[[
-        failed: paginated(client.jobs, :failed, params[:type])
-        --]]
         return render_view(self, "failed_type.tpl", vars)
     else
         vars.title = "Failed"
