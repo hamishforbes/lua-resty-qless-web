@@ -232,14 +232,6 @@ function route_funcs.worker(self, matches)
     end
     worker.stalled = stalled
 
-    --[[
-            worker: client.workers[params[:worker] ].tap do |w|
-              w['jobs']    = w['jobs'].map { |j| client.jobs[j] }
-              w['stalled'] = w['stalled'].map { |j| client.jobs[j] }
-              w['name']    = params[:worker]
-            end
-    ]]--
-
     local vars = {
         title = "Worker | " .. (workerid or ""),
         worker = worker
@@ -273,12 +265,6 @@ function route_funcs.failed(self, matches)
             end
         end
 
-        --[[
-            vars.failed = {
-                { type = 'failed type', jobs = 'array of job objects', total = 'count of job objects' },
-                { type = 'failed type', jobs = 'array of job objects', total = 'count of job objects' },
-            }
-        --]]
         return render_view(self, "failed.tpl", vars)
     end
 end
@@ -699,5 +685,3 @@ end
 
 
 return _M
-
-
