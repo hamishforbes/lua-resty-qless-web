@@ -277,7 +277,7 @@ end
 
 
 function route_funcs.completed(self, matches)
-    local jids = self.client.jobs:complete()
+    local jids = self.client.jobs:complete() or {}
 
     local job_obj = self.client.jobs
     local jobs = {}
@@ -606,12 +606,16 @@ function route_funcs.cancel_all(self, matches)
     end
 
     local client = self.client
-    if not json.type then
+    if not json['type'] then
         return "Need type"
     end
-    local jobs = client.jobs:failed(data['type'], 0, 500)
+    local jobs = client.jobs:failed(json['type'], 0, 500)
+    if not jobs.jobs then
+        return "No Jobs"
+    end
+    jobs = jobs.jobs
 
-    for _, job in jobs do
+    for _, job in pairs(jobs) do
         job:cancel()
     end
 
