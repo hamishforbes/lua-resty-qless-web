@@ -545,7 +545,7 @@ function route_funcs.retry(self, matches)
         return "Could not find job"
     end
 
-    job:requeue(job.queue)
+    job:requeue(job:queue().name)
 
     ngx.header["Content-Type"] = "application/json"
     return json_encode({id = json.id})
@@ -565,7 +565,7 @@ function route_funcs.retry_all(self, matches)
     local jobs = client.jobs:failed(data['type'], 0, 500)
 
     for _, job in jobs do
-        job:requeue(job.queue)
+        job:requeue(job:queue().name)
     end
 
     ngx.header["Content-Type"] = "application/json"
