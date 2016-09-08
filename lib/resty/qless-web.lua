@@ -206,6 +206,34 @@ function route_funcs.job(self, matches)
 end
 
 
+function route_funcs.job_json(self, matches)
+    ngx.header["Content-Type"] = "application/json"
+    local job, err = self.client.jobs:get(matches.jid)
+    if not job then
+        return json_encode({error = err})
+    end
+    local json = {
+        jid = job.jid,
+        data = job.data,
+        tags = job.tags,
+        state = job.state,
+        tracked = job.tracked,
+        failure = job.failure,
+        dependencies = job.dependencies,
+        dependents = job.dependents,
+        spawned_from_jid = job.spawned_from_jid,
+        expires_at = job.expires,
+        worker_name = job.worker,
+        klass = job.klass,
+        queue_name = job.queue_name,
+        original_retries = job.retries,
+        retries_left = job.remaining,
+        raw_queue_history = job.history,
+    }
+    return json_encode(json)
+end
+
+
 function route_funcs.workers(self, matches)
     return render_view(self, "workers.tpl", { title = "Workers", workers = self.client.workers:counts() })
 end
@@ -635,6 +663,7 @@ local routes = {
     ["/workers/(?<worker>[^/]+)?/?$"] = route_funcs.worker,
     ["/failed.json$"]                 = route_funcs.failed_json,
     ["/failed/?(?<type>[^/]+)?/?$"]   = route_funcs.failed,
+    ["/jobs/(?<jid>[^/]+).json$"]     = route_funcs.job_json,
     ["/jobs/?(?<jid>[^/]+)?/?$"]      = route_funcs.job,
     ["/completed/?$"]                 = route_funcs.completed,
     ["/track/?$"] = { GET = route_funcs.view_track, POST = route_funcs.track },
