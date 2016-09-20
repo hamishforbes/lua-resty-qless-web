@@ -228,7 +228,7 @@ function route_funcs.job_json(self, matches)
         queue_name = job.queue_name,
         original_retries = job.retries,
         retries_left = job.remaining,
-        raw_queue_history = job.history,
+        raw_queue_history = job.raw_queue_history,
     }
     return json_encode(json)
 end
