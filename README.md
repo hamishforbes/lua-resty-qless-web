@@ -1,4 +1,4 @@
-#lua-resty-qless-web
+# lua-resty-qless-web
 
 ### Overview
 Port of Moz's [qless](https://github.com/seomoz/qless) web interface to the [Openresty](http://www.openresty.org) environment.
